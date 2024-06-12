@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="main p2 mt-5">
+            <h1 class="">Sistem Penunjang Pengambilan Keputusan</h1>
+            <div class="number">
+                <label for="customRange2" class="form-label">Masukan jumlah atribut</label>
+                <input type="range" class="form-range" min="0" max="5" id="customRange2">
+            </div>
+        </div>
+        <form action="">
+
+        
+        <div class="result">
+            <div class="container text-center">
+                
+            </div>
+        </div>
+        <button type="button" class="count btn btn-primary">Hitung</button>
+        </form>
+        <div class="rangking"></div>
+    </div>
+    
+    <script>
+        const range = document.getElementById('customRange2');
+        const result = document.querySelector('.result .container');
+        range.addEventListener('input', function() {
+            result.innerHTML = '';
+            for (let i = 0; i < range.value; i++) {
+                result.innerHTML += `
+                    <div class="container text-center pt-2">
+                        <div class="row">
+                            <div class="col">
+                                <label for="atribut" class="form-label">A${i+1}</label>
+                            </div>
+                            <div class="col">
+                                <input class="form-control atribut${i+1}" type="text" aria-label="default input example">
+                            </div>
+                            <div class="col">
+                                <input class="form-control C1${i+1}" type="text" aria-label="default input example">
+                            </div>
+                            <div class="col">
+                                <input class="form-control C2${i+1}" type="text" aria-label="default input example">
+                            </div>
+                            <div class="col">
+                                <input class="form-control C3${i+1}" type="text" aria-label="default input example">
+                            </div>
+                            <div class="col">
+                                <input class="form-control C4${i+1}" type="text" aria-label="default input example">
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+        const rangking = document.querySelector('.rangking');
+
+        const count = document.querySelector('.count');
+        count.addEventListener('click', function() {
+            let C1 = 0;
+            let C2 = 0;
+            let C3 = 0;
+            let C4 = 0;
+            for (let i = 0; i < range.value; i++) {
+                let c1_value = document.querySelector(`.C1${i+1}`).value;
+                let c2_value = document.querySelector(`.C2${i+1}`).value;
+                let c3_value = document.querySelector(`.C3${i+1}`).value;
+                let c4_value = document.querySelector(`.C4${i+1}`).value;
+
+                C1 += c1_value**2;
+                C2 += c2_value**2;
+                C3 += c3_value**2;
+                C4 += c4_value**2;
+            }
+            C1 = Math.sqrt(C1);
+            C2 = Math.sqrt(C2);
+            C3 = Math.sqrt(C3);
+            C4 = Math.sqrt(C4);
+
+            console.log(C1, C2, C3, C4);
+
+            let x_c1 = [];
+            let x_c2 = [];
+            let x_c3 = [];
+            let x_c4 = [];
+
+            for (let i = 0; i < range.value; i++) {
+                let c1_value = document.querySelector(`.C1${i+1}`).value;
+                let c2_value = document.querySelector(`.C2${i+1}`).value;
+                let c3_value = document.querySelector(`.C3${i+1}`).value;
+                let c4_value = document.querySelector(`.C4${i+1}`).value;
+
+                x_c1.push(c1_value/C1);
+                x_c2.push(c2_value/C2);
+                x_c3.push(c3_value/C3);
+                x_c4.push(c4_value/C4);
+            }
+
+            console.log(x_c1, x_c2, x_c3, x_c4);
+
+            const c1_bobot = 0.3196494465;
+            const c2_bobot = 0.2283210332;
+            const c3_bobot = 0.2486162362;
+            const c4_bobot = 0.2034132841;
+
+            let o_c1 = [];
+            let o_c2 = [];
+            let o_c3 = [];
+            let o_c4 = [];
+
+            for (let i = 0; i < range.value; i++) {
+                o_c1.push(x_c1[i]*c1_bobot);
+                o_c2.push(x_c2[i]*c2_bobot);
+                o_c3.push(x_c3[i]*c3_bobot);
+                o_c4.push(x_c4[i]*c4_bobot);
+            }
+
+            console.log(o_c1, o_c2, o_c3, o_c4);
+
+            let A = [];
+            for (let i = 0; i < range.value; i++) {
+                A.push(o_c1[i]+o_c2[i]+o_c3[i]+o_c4[i]);
+            }
+
+            console.log(A);
+            let result = {};
+            for (let i = 0; i < range.value; i++) {
+                result[`A${i+1}`] = A[i];
+            }
+            // Get keys and sort by their corresponding values
+            let keysSorted = Object.keys(result).sort((a, b) => result[b] - result[a]);
+
+            // Now keysSorted is an array of keys sorted by their values
+            // You can iterate over keysSorted to work with the sorted keys
+            let i = 1;
+            for (let key of keysSorted) {
+                console.log(key, result[key]);
+                rangking.innerHTML += `
+                    <div class="container text-center pt-2">
+                        <div class="row">
+                            <div class="col">
+                                <label for="atribut" class="form-label">${key}</label>
+                            </div>
+                            <div class="col">
+                                <label for="atribut" class="form-label">${result[key]}</label>
+                            </div>
+                            <div class="col">
+                                <label for="atribut" class="form-label">${i}</label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                i++;
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+</html>
